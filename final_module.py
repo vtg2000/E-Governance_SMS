@@ -20,7 +20,9 @@ db = client1.gov_data
 result1= db.policies.find({})
 # print(result1)
 description_list=[]
-
+link_list=[]
+document_list=[]
+number1=0
 
 while(True):
 
@@ -83,22 +85,69 @@ while(True):
             message1= response['result']['fulfillment']['speech']
 
             k=1
+            l=1
+            n=1
+            flag=0
             if 'Policy' in response['result']['parameters']:
                 description_list.clear()
+                link_list.clear()
+                document_list.clear()
                 for i in range(0, 20):
                 
                     if(response['result']['parameters']['Policy'].lower() in [i.lower() for i in result1[i]['keywords']]):
                         # print(result1[i]["Title"])
                         message1+=" "+str(k)+" :"+(result1[i]["Title"])
                         description_list.insert(k, result1[i]["Description"])
+                        link_list.insert(n, result1[i]["Links"])
+
+                        
+                        document_list.insert(l, result1[i]["docs"])
+                        l+=1
+                        flag=1
                         k+=1
+                        n+=1
+                        # print(document_list)
+
+                        
+                        
                         # print(description_list)
 
             elif 'number' in response['result']['parameters']:
+                global number1
                 # print(response['result']['parameters']['number'])
-                print(description_list)
-                message1+=""+description_list[int(response['result']['parameters']['number'])-1]
+                number1 = response['result']['parameters']['number']
+                print(number1)
+                # print(description_list)
+                try:
+                    message1+=""+description_list[int(response['result']['parameters']['number'])-1]
+                except:
+                    print("out of range but kek")
 
+            elif 'links' in response['result']['parameters']:
+                
+                try:
+                    print(number1)
+                    print(response['result']['parameters']['links'])
+                    message1+=link_list[int(number1)-1]
+                except:
+                    print("out of range but kek")
+
+
+
+            elif 'documents' in response['result']['parameters']:
+                print(response['result']['parameters']['documents'])
+                print(document_list)
+                print(number1)
+                for i in range(0, len(document_list)):
+                    if i==(int(number1)-1):
+                        for j in range(0,len(document_list[i])):
+                            message1+=" "+str(j+1)+" : "+ document_list[i][j]
+                            print(message1)
+                        
+                
+                # print("out of range but kek")
+
+        
 
             print(message1)
             hi1 =sendSMS('7JppUgkDJCY-kr4NbUxPxwc8G76PqG9EYSvgPPB2hq', number,'TXTLCL', ''+message1)
