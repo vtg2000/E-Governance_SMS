@@ -96,7 +96,7 @@ while(True):
                 
                     if(response['result']['parameters']['Policy'].lower() in [i.lower() for i in result1[i]['keywords']]):
                         # print(result1[i]["Title"])
-                        message1+=" "+str(k)+" :"+(result1[i]["Title"])
+                        # message1+=" "+str(k)+" :"+(result1[i]["Title"])
                         description_list.insert(k, result1[i]["Description"])
                         link_list.insert(n, result1[i]["Links"])
 
@@ -118,10 +118,10 @@ while(True):
                 number1 = response['result']['parameters']['number']
                 print(number1)
                 # print(description_list)
-                try:
-                    message1+=""+description_list[int(response['result']['parameters']['number'])-1]
-                except:
-                    print("out of range but kek")
+                # try:
+                #     message1+=""+description_list[int(response['result']['parameters']['number'])-1]
+                # except:
+                #     print("out of range but kek")
 
             elif 'links' in response['result']['parameters']:
                 
@@ -142,15 +142,16 @@ while(True):
                     if i==(int(number1)-1):
                         for j in range(0,len(document_list[i])):
                             message1+=" "+str(j+1)+" : "+ document_list[i][j]
-                            print(message1)
+                            # print(message1)
                         
                 
-                # print("out of range but kek")
+                print("out of range but kek")
 
         
 
             print(message1)
             hi1 =sendSMS('7JppUgkDJCY-kr4NbUxPxwc8G76PqG9EYSvgPPB2hq', number,'TXTLCL', ''+message1)
+            
             print(hi1)
             print("message sent")
         else:
