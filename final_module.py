@@ -98,6 +98,7 @@ while(True):
                 description_list.clear()
                 link_list.clear()
                 document_list.clear()
+                title_list.clear()
                 for i in range(0, 20):
                 
                     if(response['result']['parameters']['Policy'][0].lower() in [i.lower() for i in result1[i]['keywords']]):
@@ -157,7 +158,19 @@ while(True):
                             # print(message1)
                         
                 
-                print("out of range but kek")
+            elif 'information' in response['result']['parameters']:
+                # print("okayyy", title_list[int(number1-1)])
+                # print(description_list[int(number1-1)])
+                # print(link_list[int(number1-1)])
+                try:
+                    message1+=striphtml("Title: "+title_list[int(number1)-1]+"Description: "+description_list[int(number1)-1]+"Link : "+link_list[int(number1)-1]+"Documents: ")
+                    for i in range(0, len(document_list)):
+                        if i==(int(number1)-1):
+                            for j in range(0,len(document_list[i])):
+                                message1+=striphtml(""+str(j+1)+" : "+document_list[i][j])
+                except:
+                    print("out of range but kek")
+
 
         
 
