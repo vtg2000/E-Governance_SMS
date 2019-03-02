@@ -10,8 +10,11 @@ import urllib.request
 import urllib.parse
 import requests
 import time
+import re
 
-
+def striphtml(data):
+    p = re.compile(r'<.*?>')
+    return p.sub(' ', data)
 
 
 client1 = MongoClient()
@@ -23,7 +26,7 @@ description_list=[]
 link_list=[]
 document_list=[]
 number1=0
-
+title_list=[]
 while(True):
 
     Access_token ="0f8f425da1e94bf898d4cb65de3ced33"
@@ -82,11 +85,14 @@ while(True):
         print(responseStatus)
         if responseStatus==200 or 206 :
             print(response['result']['fulfillment']['speech'])
-            message1= response['result']['fulfillment']['speech']
+            
+            
+            message1=''
 
             k=1
             l=1
             n=1
+            m=1
             flag=0
             if 'Policy' in response['result']['parameters']:
                 description_list.clear()
@@ -94,10 +100,15 @@ while(True):
                 document_list.clear()
                 for i in range(0, 20):
                 
-                    if(response['result']['parameters']['Policy'].lower() in [i.lower() for i in result1[i]['keywords']]):
+                    if(response['result']['parameters']['Policy'][0].lower() in [i.lower() for i in result1[i]['keywords']]):
                         # print(result1[i]["Title"])
                         # message1+=" "+str(k)+" :"+(result1[i]["Title"])
-                        description_list.insert(k, result1[i]["Description"])
+                        # print(result1[i]["Description"])
+                        message1 = striphtml(response['result']['fulfillment']['speech'])
+                        one = striphtml(result1[i]["Description"])
+                        # print(one)
+                        description_list.insert(k, one)
+                        title_list.insert(m, result1[i]['Title'])
                         link_list.insert(n, result1[i]["Links"])
 
                         
@@ -106,29 +117,30 @@ while(True):
                         flag=1
                         k+=1
                         n+=1
+                        m+=1
                         # print(document_list)
 
                         
                         
-                        # print(description_list)
+                        print(description_list)
 
             elif 'number' in response['result']['parameters']:
                 global number1
                 # print(response['result']['parameters']['number'])
                 number1 = response['result']['parameters']['number']
                 print(number1)
-                # print(description_list)
-                # try:
-                #     message1+=""+description_list[int(response['result']['parameters']['number'])-1]
-                # except:
-                #     print("out of range but kek")
+                print(description_list)
+                try:
+                    message1+=""+description_list[int(response['result']['parameters']['number'])-1]
+                except:
+                    print("out of range but kek")
 
             elif 'links' in response['result']['parameters']:
                 
                 try:
                     print(number1)
                     print(response['result']['parameters']['links'])
-                    message1+=link_list[int(number1)-1]
+                    message1+=striphtml(link_list[int(number1)-1])
                 except:
                     print("out of range but kek")
 
@@ -141,7 +153,7 @@ while(True):
                 for i in range(0, len(document_list)):
                     if i==(int(number1)-1):
                         for j in range(0,len(document_list[i])):
-                            message1+=" "+str(j+1)+" : "+ document_list[i][j]
+                            message1+=striphtml(" "+str(j+1)+" : "+ document_list[i][j])
                             # print(message1)
                         
                 
@@ -214,3 +226,4 @@ while(True):
     resp =  getMessages('7JppUgkDJCY-kr4NbUxPxwc8G76PqG9EYSvgPPB2hq', '10')
     time.sleep(10)
     # print(resp)
+
