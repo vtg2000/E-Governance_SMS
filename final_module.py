@@ -3,7 +3,7 @@ import os
 import dialogflow
 import requests
 import json
-import pusher
+
 from pymongo import MongoClient
 import json, pprint
 import urllib.request
@@ -11,13 +11,14 @@ import urllib.parse
 import requests
 import time
 import re
-
+import langdetect
+import googletrans
+trans = googletrans.Translator()
 def striphtml(data):
     p = re.compile(r'<.*?>')
     return p.sub(' ', data)
 
 
-client1 = MongoClient()
 client1 = MongoClient('localhost', 27017)
 db = client1.gov_data
 result1= db.policies.find({})
@@ -38,7 +39,7 @@ while(True):
     def get_context(message, number):
         req=client.text_request()
         print(req)
-        req.lang="de"
+        req.lang="en"
         # req.session_id= response["sessionId"]
         req.query=message
         
@@ -175,6 +176,8 @@ while(True):
         
 
             print(message1)
+            # message1 = trans.translate(message1, src='en', dest='hi').text
+            # print(message1)
             hi1 =sendSMS('7JppUgkDJCY-kr4NbUxPxwc8G76PqG9EYSvgPPB2hq', number,'TXTLCL', ''+message1)
             
             print(hi1)
@@ -215,7 +218,14 @@ while(True):
         data={"id": []}
         for i in range(0, len(hi['messages'])):
             y = hi['messages'][i]['message'].replace('C6A3Q','')
-            
+            print(y)
+            if isinstance(y, int):
+                lang = langdetect.detect(y)
+                print(lang)
+                if lang=='hi':
+                    y = trans.translate(y, src='hi', dest='en').text
+                    print(y)
+                
             # print(hi["messages"][i]["number"])
             # print(hi["messages"][i]["id"])
             
